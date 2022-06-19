@@ -1,6 +1,11 @@
 package dev.woc.elgame.world;
 
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.github.benmanes.caffeine.cache.AsyncLoadingCache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import dev.woc.elgame.tile.TileType;
@@ -72,5 +77,28 @@ public class World {
 
     public Optional<TileType> getTileIfPresent(Vector2i tilePosition) {
         return getChunkIfLoaded(Chunk.getChunkPositionContainingTile(tilePosition)).map(chunk -> chunk.getTile(tilePosition));
+    }
+
+    public Optional<TileType> getTileIfPresent(int x, int y) {
+        return getTileIfPresent(new Vector2i(x, y));
+    }
+
+    public void render(SpriteBatch batch, OrthographicCamera camera) {
+        Vector3 bl = camera.unproject(new Vector3(0, 0, 0));
+        Vector3 tr = camera.unproject(new Vector3(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0));
+        Vector2i blt = new Vector2i(Math.floorDiv((int) bl.x, 16), Math.floorDiv((int) bl.y, 16));
+        Vector2i trt = new Vector2i(Math.floorDiv((int) tr.x, 16), Math.floorDiv((int) tr.y, 16));
+//        System.out.println(blt + " " + trt);
+        for (int x = blt.x - 1; x < trt.x + 1 ; x++) {
+            for (int y = trt.y - 1; y < blt.y + 1 ; y++) {
+                int X = x;
+                int Y = y;
+                Optional.ofNullable(getTile(x, y).getNow(null)).ifPresent(tileType -> tileType.render(batch, X * 16, Y * 16));
+            }
+        }
+    }
+
+    public CompletableFuture<TileType> getTile(int x, int y) {
+        return getTile(new Vector2i(x, y));
     }
 }

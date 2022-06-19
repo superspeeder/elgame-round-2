@@ -18,19 +18,23 @@ public class Chunk {
     public Chunk(Vector2i pos) {
         this.pos = pos;
 
+
         if (pos.y < 0) {
             for (int x = 0 ; x < SIZE ; x++) {
                 for (int y = 0 ; y < SIZE ; y++) {
-                    map[y][x] = TileType.
+                    map[y][x] = TileTypes.STONE;
                 }
             }
         } else {
             for (int x = 0 ; x < SIZE ; x++) {
                 for (int y = 0 ; y < SIZE ; y++) {
-                    map[y][x] = TileTypes.AIR;
+                    map[y][x] = TileTypes.DIRT;
                 }
             }
         }
+
+        System.out.println("Loaded " + pos);
+
     }
 
     public void set(int x, int y, TileType tile) {

@@ -11,6 +11,15 @@ public class Vector2i implements Cloneable, Serializable {
         this.y = y;
     }
 
+
+    @Override
+    public String toString() {
+        return "Vector2i{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
+    }
+
     @Override
     public Vector2i clone() {
         try {

@@ -2,19 +2,30 @@ package dev.woc.elgame.tile;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import dev.woc.elgame.render.BaseTexture;
+import dev.woc.elgame.utils.NamespacedPath;
 
 import java.io.InputStream;
 
 public class TileType {
     private static final int DEFAULT_FLAGS = TileFlags.VISIBLE | TileFlags.COLLIDABLE;
-    private String name;
-    private TextureRegion texture;
+    private NamespacedPath name;
+    private BaseTexture texture;
     private int flags;
 
-    public TileType(int flags, String name) {
+    public TileType(int flags, NamespacedPath name) {
         this.flags = flags;
         this.name = name;
+    }
+
+    public BaseTexture getTexture() {
+        if (texture == null) {
+            texture = BaseTexture.load(new NamespacedPath(name.getNamespace(), "tile." + name.getPath()));
+        }
+
+        return texture;
     }
 
 
@@ -22,11 +33,19 @@ public class TileType {
         return (this.flags & flags) == flags;
     }
 
+    public void render(SpriteBatch batch, int x, int y) {
+        if (checkFlags(TileFlags.VISIBLE)) {
+            if (!checkFlags(TileFlags.COMPLEX_RENDER)) {
+                batch.draw(getTexture().getRegion(), x, y, 16, 16);
+            }
+        }
+    }
+
     public static class Builder {
         private int flags = DEFAULT_FLAGS;
-        private String name;
+        private NamespacedPath name;
 
-        public Builder(String name) {
+        public Builder(NamespacedPath name) {
             this.name = name;
         }
 

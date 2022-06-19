@@ -76,5 +76,7 @@ project(":core") {
         api 'com.github.ben-manes.caffeine:caffeine:3.1.0'
         api 'com.github.ben-manes.caffeine:guava:3.1.1'
         api 'com.github.ben-manes.caffeine:jcache:3.1.1'
+        api 'org.json:json:20220320'
+
     }
 }

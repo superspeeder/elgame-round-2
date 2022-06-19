@@ -1,7 +1,6 @@
 {
   "atlas": "base::animated_textures",
   "animation": {
-    "frame-rate": 1,
-    "repeat-mode": "restart"
+    "frame-rate": 1
   }
 }

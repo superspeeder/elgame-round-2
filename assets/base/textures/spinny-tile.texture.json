@@ -1,0 +1,6 @@
+{
+  "atlas": "base::animated-textures",
+  "animation": {
+    "frame-rate": 5
+  }
+}
