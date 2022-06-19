@@ -46,7 +46,7 @@ public class TileType {
         public TileType build() {
             return new TileType(
                     flags, name
-            )
+            );
         }
     }
 }

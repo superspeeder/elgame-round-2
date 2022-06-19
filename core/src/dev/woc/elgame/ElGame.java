@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 public class ElGame extends Game {
 	@Override
 	public void create () {
+
 	}
 
 	@Override
