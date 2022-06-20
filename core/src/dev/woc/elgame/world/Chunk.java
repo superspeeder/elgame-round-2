@@ -4,37 +4,65 @@ import dev.woc.elgame.entity.Entity;
 import dev.woc.elgame.tile.TileType;
 import dev.woc.elgame.tile.TileTypes;
 import dev.woc.elgame.utils.Vector2i;
+import noise.OpenSimplex2;
 
 import java.util.Set;
 
 public class Chunk {
 
     public static final int SIZE = 64;
+    private World world;
     private Vector2i pos;
     private Set<Entity> entities;
 
     private TileType[][] map = new TileType[SIZE][SIZE];
 
-    public Chunk(Vector2i pos) {
+    public Chunk(World world, Vector2i pos) {
+        this.world = world;
         this.pos = pos;
+
+
+        Vector2i highestPoint = new Vector2i(0, pos.y * SIZE);
+        boolean containedSurface = false;
 
 
         for (int x = 0 ; x < SIZE ; x++) {
             int tx = x + pos.getX() * SIZE;
-            int h = (int) (Math.sin(tx / 50.0f) * 50.0f + 25);
+            float mountainness_mod = (float) Math.sqrt(OpenSimplex2.noise2(world.getSeed(), tx / 1500.0f, 100.0f) * 2.0f + 2.0f);
+            float crag_mod = (float) Math.max(1.5f, Math.pow(OpenSimplex2.noise2(world.getSeed(), tx / 1500.0f, 300.0f) * 2.0f + 3.0f, 2));
+            float height_mod = (float) Math.sqrt(OpenSimplex2.noise2(world.getSeed(), tx / 1500.0f, 500.0f) + 1.0f) * 150;
+
+            int h = (int) ((world.getSurfaceGenerationNoise().eval(tx / (150.0f * crag_mod), 0) + 1.0f) * 50.0f * mountainness_mod + height_mod);
+            if (h > highestPoint.y) {
+                highestPoint.x = tx;
+                highestPoint.y = h;
+            }
             for (int y = 0 ; y < SIZE ; y++) {
                 int ty = y + pos.getY() * SIZE;
                 if (ty < h - 5) {
                     map[y][x] = TileTypes.STONE;
+                } else if (ty == h - 5) {
+                    map[y][x] = TileTypes.DIRT_STONE;
                 } else if (ty < h) {
                     map[y][x] = TileTypes.DIRT;
                 } else if (ty == h) {
+                    containedSurface = true;
                     map[y][x] = TileTypes.GRASS;
                 } else {
                     map[y][x] = TileTypes.AIR;
                 }
             }
         }
+
+        if (containedSurface) {
+            System.out.println(highestPoint);
+            for (int y = highestPoint.y + 1; y < highestPoint.y + 6; y++) {
+                world.setTile(highestPoint.x, y, TileTypes.WOOD);
+            }
+
+            world.setTile(highestPoint.x, highestPoint.y + 6, TileTypes.SPINNY);
+        }
+
 
         System.out.println("Loaded " + pos);
 
@@ -69,9 +97,9 @@ public class Chunk {
 
     }
 
-    public static Chunk load(Vector2i pos) {
+    public static Chunk load(World world, Vector2i pos) {
 
-        return new Chunk(pos);
+        return new Chunk(world, pos);
     }
 
     public TileType getTile(int x, int y) {

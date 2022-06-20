@@ -4,12 +4,14 @@ package dev.woc.elgame.world;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.github.benmanes.caffeine.cache.AsyncLoadingCache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import dev.woc.elgame.tile.TileType;
+import dev.woc.elgame.utils.noise.Noise2D;
 import dev.woc.elgame.utils.Vector2i;
+import dev.woc.elgame.utils.noise.FractalNoise2D;
+import dev.woc.elgame.utils.noise.OpenSimplex2D;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -32,7 +34,12 @@ public class World {
                     ((Chunk)value).onRemove();
                 }
             })
-            .buildAsync(Chunk::load);
+            .buildAsync(k -> Chunk.load(this, k));
+
+    private long seed = System.currentTimeMillis();
+    private Noise2D surfaceGenNoise = new FractalNoise2D(
+            new OpenSimplex2D(seed),
+            4, 2.0f, 0.5f);
 
     public CompletableFuture<Chunk> getChunkAsync(Vector2i position) {
         return chunkCache.get(position);
@@ -100,5 +107,17 @@ public class World {
 
     public CompletableFuture<TileType> getTile(int x, int y) {
         return getTile(new Vector2i(x, y));
+    }
+
+    public Noise2D getSurfaceGenerationNoise() {
+        return surfaceGenNoise;
+    }
+
+    public void setTile(int x, int y, TileType type) {
+        setTile(new Vector2i(x, y), type);
+    }
+
+    public long getSeed() {
+        return seed;
     }
 }

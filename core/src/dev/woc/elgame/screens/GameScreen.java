@@ -20,7 +20,7 @@ public class GameScreen extends ScreenAdapter {
     private OrthographicCamera camera;
     private SpriteBatch batch = new SpriteBatch();
     private World world;
-    private float zoom = 2.0f;
+    private float zoom = 1.0f;
 
     public GameScreen(ElGame game) {
         this.game = game;
@@ -39,16 +39,15 @@ public class GameScreen extends ScreenAdapter {
         batch.end();
 
         if (Gdx.input.isKeyPressed(Input.Keys.EQUALS)) {
-            zoom += 0.01f;
+            zoom += 0.03f;
             Vector3 p = camera.position.cpy();
             camera.setToOrtho(false, Gdx.graphics.getBackBufferWidth() / zoom, Gdx.graphics.getBackBufferHeight() / zoom);
             camera.position.set(p);
             batch.setProjectionMatrix(camera.projection);
-
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.MINUS)) {
-            zoom -= 0.01f;
+            zoom -= 0.03f;
             if (zoom < 0.5f) zoom = 0.5f;
             Vector3 p = camera.position.cpy();
             camera.setToOrtho(false, Gdx.graphics.getBackBufferWidth() / zoom, Gdx.graphics.getBackBufferHeight() / zoom);
@@ -57,26 +56,26 @@ public class GameScreen extends ScreenAdapter {
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-            camera.translate(0, -8);
+            camera.translate(0, -16);
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-            camera.translate(8, 0);
+            camera.translate(16, 0);
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-            camera.translate(-8, 0);
+            camera.translate(-16, 0);
         }
 
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-            camera.translate(0, 8);
+            camera.translate(0, 16);
         }
         camera.update();
 
         if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
             Vector3 mp = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
             Vector3 wp = camera.unproject(mp);
-            world.setTile(new Vector2i(Math.floorDiv((int) wp.x, 16), Math.floorDiv((int) wp.y, 16)), TileTypes.SPINNY);
+            world.setTile(new Vector2i(Math.floorDiv((int) wp.x, 16), Math.floorDiv((int) wp.y, 16)), TileTypes.WOOD);
         }
 
         if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
