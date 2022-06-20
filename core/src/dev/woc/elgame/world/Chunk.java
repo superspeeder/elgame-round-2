@@ -19,16 +19,19 @@ public class Chunk {
         this.pos = pos;
 
 
-        if (pos.y < 0) {
-            for (int x = 0 ; x < SIZE ; x++) {
-                for (int y = 0 ; y < SIZE ; y++) {
+        for (int x = 0 ; x < SIZE ; x++) {
+            int tx = x + pos.getX() * SIZE;
+            int h = (int) (Math.sin(tx / 50.0f) * 50.0f + 25);
+            for (int y = 0 ; y < SIZE ; y++) {
+                int ty = y + pos.getY() * SIZE;
+                if (ty < h - 5) {
                     map[y][x] = TileTypes.STONE;
-                }
-            }
-        } else {
-            for (int x = 0 ; x < SIZE ; x++) {
-                for (int y = 0 ; y < SIZE ; y++) {
+                } else if (ty < h) {
                     map[y][x] = TileTypes.DIRT;
+                } else if (ty == h) {
+                    map[y][x] = TileTypes.GRASS;
+                } else {
+                    map[y][x] = TileTypes.AIR;
                 }
             }
         }

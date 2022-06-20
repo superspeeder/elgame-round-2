@@ -15,4 +15,12 @@ public class TileTypes {
     public static final TileType DIRT = new TileType.Builder(makens("base::dirt"))
             .flags(TileFlags.COLLIDABLE | TileFlags.VISIBLE)
             .build();
+
+    public static final TileType GRASS = new TileType.Builder(makens("base::grass"))
+            .flags(TileFlags.COLLIDABLE | TileFlags.VISIBLE)
+            .build();
+
+    public static final TileType SPINNY = new TileType.Builder(makens("base::spinny-tile"))
+            .flags(TileFlags.COLLIDABLE | TileFlags.VISIBLE)
+            .build();
 }
